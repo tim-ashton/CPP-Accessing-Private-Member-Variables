@@ -41,7 +41,7 @@ int main()
 	PrivateClass p;
 	
 	int test = p.*Result<PrivateClass_m_int>::ptr;
-	// value of th m_int is now stored in test
+	// value of the private m_int variable is now stored in test
 
 	return 0;
 }
