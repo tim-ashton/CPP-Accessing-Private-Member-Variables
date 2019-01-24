@@ -1,3 +1,4 @@
+#include <iostream>
 
 template<typename Tag>
 struct Result {
@@ -24,24 +25,51 @@ typename Rob<Tag, p>::Filler Rob<Tag, p>::filler_obj;
 
 class PrivateClass
 {
-	int m_int;
-public:
-	PrivateClass()
-		: m_int(100)
-	{}
+    int m_int;
+
+  public:
+    PrivateClass()
+        : m_int(100)
+    {
+    }
+
+  private:
+    bool IsEven(unsigned int test_val)
+    {
+        return (test_val % 2) == 0;
+    }
 };
 
-
-struct PrivateClass_m_int { typedef int PrivateClass:: *type; };
+// Access the private integer value of PrivateClass
+struct PrivateClass_m_int
+{
+    typedef int PrivateClass::*type;
+};
 template class Rob<PrivateClass_m_int, &PrivateClass::m_int>;
 
+// Access the private function of PrivateClass
+struct PrivateClass_IsEven
+{
+    typedef bool (PrivateClass::*type)(unsigned int);
+};
+template class Rob<PrivateClass_IsEven, &PrivateClass::IsEven>;
 
 int main()
 {
-	PrivateClass p;
-	
-	int test = p.*Result<PrivateClass_m_int>::ptr;
-	// value of the private m_int variable is now stored in test
+    PrivateClass p;
 
-	return 0;
+    int test = p.*Result<PrivateClass_m_int>::ptr;
+    std::cout << "The value of private int is : " << test << std::endl;
+
+    // Call private IsEven function
+    if ((p.*Result<PrivateClass_IsEven>::ptr)(2))
+    {
+        std::cout << "Its Even!" << std::endl;
+    }
+    else
+    {
+        std::cout << "Its Odd!" << std::endl;
+    }
+
+    return 0;
 }
